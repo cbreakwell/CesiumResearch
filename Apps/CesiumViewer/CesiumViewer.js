@@ -1,23 +1,28 @@
 /*global define*/
 define([
+        'Cesium',
         'Core/defined',
         'Core/formatError',
         'Core/getFilenameFromUri',
         'DataSources/CzmlDataSource',
         'DataSources/GeoJsonDataSource',
         'Scene/TileMapServiceImageryProvider',
+        'Scene/WebMapServiceImageryProvider',
         'Widgets/Viewer/Viewer',
         'Widgets/Viewer/viewerCesiumInspectorMixin',
         'Widgets/Viewer/viewerDragDropMixin',
         'Widgets/Viewer/viewerEntityMixin',
+        'GeoserverTerrainProvider',
         'domReady!'
     ], function(
+        Cesium,
         defined,
         formatError,
         getFilenameFromUri,
         CzmlDataSource,
         GeoJsonDataSource,
         TileMapServiceImageryProvider,
+        WebMapServiceImageryProvider,
         Viewer,
         viewerCesiumInspectorMixin,
         viewerDragDropMixin,
@@ -81,10 +86,25 @@ define([
 
     var layers = viewer.scene.imageryLayers;
     console.log('layers: ', layers);
-    //var wmsLayer =
-        layers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
-        url: 'http://geoserver2.rogue.lmnsolutions.com/geoserver/wms/geonode:incidentes_od3'
-    }));
+
+//    var wmsLayer =
+//        layers.addImageryProvider(new WebMapServiceImageryProvider({
+//        url: 'http://192.168.10.114/geoserver/wms',
+//        layers: 'geonode:pittsburghConverted',
+//        parameters: {
+//          tiled: 'true'
+//        }
+//    }));
+    var terrainProvider = new Cesium.GeoserverTerrainProvider({
+      url: 'http://192.168.10.114/geoserver/wms',
+      layerName: 'geonode:pittsburghConverted',
+      parameters: {tiled: 'true'}
+    });
+  var vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
+    url : '//www.vr-theworld.com/vr-theworld/tiles1.0.0/73/',
+    credit : 'Terrain data courtesy VT MÄK'
+  });
+  viewer.scene.terrainProvider = vrTheWorldProvider;
 
     var showLoadError = function(name, error) {
         var title = 'An error occurred while loading the file: ' + name;
